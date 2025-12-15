@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+#Имена и IP создаваемых хостов
+hosts = {
+  "controller" => "192.168.56.10",
+  "web" => "192.168.56.11",
+  "db" => "192.168.56.12"
+}
+ENV['VAGRANT_SERVER_URL'] = 'http://vagrant.elab.pro'
+Vagrant.configure("2") do |config|
+  #образ виртуальной машины с Vagrant Cloud
+  config.vm.box = "bento/ubuntu-24.04"
+hosts.each do |name, ip|
+    config.vm.define name do |machine|
+      machine.vm.network :private_network, ip: ip
+      if name == "web"
+        machine.vm.network "forwarded_port", guest: 80, host: 8000, host_ip: "127.0.0.1"
+      end
+      #Настройка виртаульной машины
+      machine.vm.provider "virtualbox" do |vb|
+        vb.name = name
+        vb.gui = false
+        vb.memory = "1024"
+        vb.cpus = 1
+      end
+    machine.vm.provision "shell", path: "provision.sh"
+    end
+  end
+end
