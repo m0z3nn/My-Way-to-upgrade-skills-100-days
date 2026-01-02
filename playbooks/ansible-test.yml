@@ -1,8 +1,0 @@
-# ~/ansible-test.yml
----
-- name: Test connection to lab
-  hosts: all
-  gather_facts: false
-  tasks:
-    - name: Test ping
-      ansible.builtin.ping:
